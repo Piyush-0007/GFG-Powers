@@ -1,0 +1,38 @@
+/* img, video {
+    filter : drop-shadow(5px);
+} */
+
+/* a.green.item.problems_header_menu__items__BUrou{
+    width : 20% !important;
+} */
+
+div.ui.green.pointing.secondary.menu{
+    
+    overflow-x: auto;
+    overflow-y : hidden;
+    scrollbar-width: thin;
+}
+
+div.ui.green.pointing.secondary.menu::-webkit-scrollbar {
+    width: 1px;
+}
+
+button.ui.button.problems_compile_button__Lfluz, .problems_content_pane__nexJa{
+    display: none;
+}
+.testcase, .testBox {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+
+.testcase svg {
+    margin-right: 5px;
+}
+.my_problems_content_pane{
+    padding: 0 25px 15px;
+    height: calc(100% - 50px);
+    overflow-y: auto;
+    /* background-color: var(--card-background); */
+}

@@ -1,0 +1,36 @@
+{
+  "manifest_version" : 3,
+  "name" : "demoEXE",
+  "description" : "extension for practice purpose",
+  "version" : "1.0",
+  "action" : {
+    "default_popup" : "popup/popup.html",
+    "default_icon"  : "images/icon.png"
+  },
+  "icons": {
+    "16" : "images/icon.png",
+    "48" : "images/icon.png",
+    "128" : "images/icon.png"
+  },
+  "content_scripts":[
+    {
+      "matches":["https://www.geeksforgeeks.org/problems*"],
+      "js" : ["js/content.js"],
+      "css" : ["css/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions" : [
+    "storage",
+    "activeTab",
+    "scripting",
+    "declarativeContent"
+  ],
+  "background"  : {
+    "service_worker" : "js/background.js" 
+  },
+  "chrome_url_overrides" : {
+    "history" : "history/history.html"
+  }
+
+}
