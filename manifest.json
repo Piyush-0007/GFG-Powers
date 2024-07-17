@@ -1,8 +1,8 @@
 {
   "manifest_version" : 3,
-  "name" : "demoEXE",
-  "description" : "extension for practice purpose",
-  "version" : "1.0",
+  "name" : "GeeksForGeeks - Unlocking Super Powers",
+  "description" : "Provide power for the GeeksForGeeks problem solving website of ability to save multiple input and with handy shortcuts.",
+  "version" : "1.0.0",
   "action" : {
     "default_popup" : "popup/popup.html",
     "default_icon"  : "images/icon.png"
@@ -28,9 +28,6 @@
   ],
   "background"  : {
     "service_worker" : "js/background.js" 
-  },
-  "chrome_url_overrides" : {
-    "history" : "history/history.html"
   }
 
 }
