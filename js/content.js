@@ -62,31 +62,42 @@ ele.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" wid
 header.appendChild(ele);
 
 count = 1;
-ele.addEventListener("click", () => {
+ele.addEventListener("click", addNewCase);
+function addNewCase(e){
     saveActiveData(curActive);
     let inp = document.createElement("a");
     inp.className = "item";
-    activate(inp);
     inp.innerText = `Case ${++count}`;
     inp.id = `${count}`;
-    saveActiveData(inp)
+    
+    if(curActive == result){
+        saveActiveData(inp, exampleCase)
+        showCase(inp);
+    }else{
+        saveActiveData(inp, e.input)
+        
+    }
+    activate(inp);
     header.insertBefore(inp, ele);
     header.scrollLeft = header.scrollWidth;
-
 
     inp.addEventListener("click", (e) => {
         saveActiveData(curActive);
         activate(inp);
         showCase(inp);
-    })
+    });
 
-});
+    return inp;
 
-function saveActiveData(ele) {
+
+}
+
+function saveActiveData(ele, value) {
+    console.log(value); 
     if (curActive == result) return;
-    const data = document.querySelector(".problems_custom_input_textarea__T9IDk").value;
+    const data = value??document.querySelector(".problems_custom_input_textarea__T9IDk").value;
     console.log("auto save");
-    console.log(data);
+    console.log(value);
     chrome.runtime.sendMessage({ action: "setData", key: ele.id, value: data });
 }
 
@@ -214,6 +225,17 @@ function showCase(cases) {
                 }
                 document.querySelector("button.ui.button.problems_compile_button__Lfluz").click();
                 result.click();
+
+                el.addEventListener("click",(e)=>{
+                    if(e.target.classList.contains("problems_pointer__fzYYK")){
+                        e.stopPropagation();
+                        const testcase = addNewCase({value : data});
+                        showCase(testcase);
+                        console.log(e.target)
+                        console.log(data);
+
+                    }
+                });
             })
 
         })
