@@ -36,3 +36,6 @@ button.ui.button.problems_compile_button__Lfluz, .problems_content_pane__nexJa{
     overflow-y: auto;
     /* background-color: var(--card-background); */
 }
+.appearingPopup_toggler_container___qGgF{
+    display: none;
+}
