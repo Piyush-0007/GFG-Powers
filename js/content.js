@@ -21,6 +21,7 @@ resultData = `
         <span>Click on Compile &amp; Run button to see Result.</span>
 
 `
+let addToTestCase = true;
 
 //adding Result and primary input case.
 const result = document.createElement("a");
@@ -35,7 +36,20 @@ result.addEventListener("click", (e) => {
     // resultPanel.innerHTML = resultData;
     child[0].click();
     resultPanel.style.display = "none";
-    document.querySelector(" .problems_content_pane__nexJa").style.display = "block";
+    const arena = document.querySelector(" .problems_content_pane__nexJa")
+    arena.style.display = "block";
+    if(addToTestCase){
+        arena.addEventListener("click",(e)=>{
+            if(e.target.classList.contains("problems_pointer__fzYYK")){
+                e.stopPropagation();
+                const value = e?.target?.parentNode?.parentNode?.nextSibling?.innerText;
+                console.log(value);
+                const testcase = addNewCase({input : value});
+                showCase(testcase);
+            }
+        });
+        addToTestCase = false;
+    }
     clearInterval(mutation);
 
 })
@@ -54,6 +68,8 @@ case1.addEventListener("click", (e) => {
 
 //variable to set the current active tab
 let curActive = case1;
+//last active test case
+let prevTestCase = null;
 
 //button for addition of testcase +
 const ele = document.createElement("a");
@@ -70,12 +86,9 @@ function addNewCase(e){
     inp.innerText = `Case ${++count}`;
     inp.id = `${count}`;
     
+    saveActiveData(inp, e.input??exampleCase, false)
     if(curActive == result){
-        saveActiveData(inp, exampleCase)
         showCase(inp);
-    }else{
-        saveActiveData(inp, e.input)
-        
     }
     activate(inp);
     header.insertBefore(inp, ele);
@@ -92,9 +105,9 @@ function addNewCase(e){
 
 }
 
-function saveActiveData(ele, value) {
+function saveActiveData(ele, value, nonResult = true) {
     console.log(value); 
-    if (curActive == result) return;
+    if ( nonResult && (curActive == result || !ele)) return;
     const data = value??document.querySelector(".problems_custom_input_textarea__T9IDk").value;
     console.log("auto save");
     console.log(value);
@@ -104,6 +117,8 @@ function saveActiveData(ele, value) {
 
 //changing the tab of output window
 function activate(ele) {
+    // if(curActive == prevTestCase) return;
+    // prevTestCase = curActive;
     curActive.classList.remove("active");
     ele.classList.add("active");
     curActive = ele;
@@ -121,7 +136,7 @@ function waitForElement(selector, callback) {
     }, 100); // Check every 100ms
 }
 
-
+const custom_input = null;
 function customInp(custom_input) {
     custom_input.innerHTML = "";
     const testcase = document.createElement("div");
@@ -135,10 +150,12 @@ function customInp(custom_input) {
     custom_input.appendChild(testcase);
     custom_input.parentNode.classList.add("testcase");
 
-
+    custom_input = testcase;
 
     testcase.addEventListener("click", () => {
-        output.parentNode.classList.toggle("visible");
+
+        output.parentNode.classList.add("visible");
+
         if (exampleCase == null) {
             waitForElement(".problems_content_pane__nexJa", (defCase) => {
                 runnable = document.querySelector(".problems_custom_input_textarea__T9IDk")
@@ -146,11 +163,21 @@ function customInp(custom_input) {
                 const payload = { action: "setData", key: curActive.id, value: exampleCase };
                 chrome.runtime.sendMessage(payload, (response) => {
                     console.log(response);
-                    if (curActive != result) showCase(curActive);
+                    showCase(curActive);
                 });
             });
         } else if (curActive != result) showCase(curActive);
+        case1.click();
     });
+
+    //attaching event listener to 
+    document.querySelector("button.ui.button.problems_submit_button__6QoNQ").addEventListener('click',(e)=>{
+        output.parentNode.classList.add("visible");
+        console.log(e.target);
+        testcase.click();
+        result.click();
+       
+    })
 
 }
 
@@ -163,8 +190,10 @@ waitForElement(".problems_custom_input__ediyL", customInp);
 // Function to inject values into the HTML structure
 function showCase(cases) {
     resultPanel.style.display = "block";
-    document.querySelector(" .problems_content_pane__nexJa").style.display = "none";
-
+    try{
+        document.querySelector(" .problems_content_pane__nexJa").style.display = "none";
+    }catch(e){console.log(e);}
+    
     // Retrieve the values from chrome.storage.session
     console.log("into the showcase")
     const payload = { action: "getData", key: cases.id };
@@ -226,16 +255,7 @@ function showCase(cases) {
                 document.querySelector("button.ui.button.problems_compile_button__Lfluz").click();
                 result.click();
 
-                el.addEventListener("click",(e)=>{
-                    if(e.target.classList.contains("problems_pointer__fzYYK")){
-                        e.stopPropagation();
-                        const testcase = addNewCase({value : data});
-                        showCase(testcase);
-                        console.log(e.target)
-                        console.log(data);
-
-                    }
-                });
+                
             })
 
         })

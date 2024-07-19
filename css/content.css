@@ -55,12 +55,12 @@ button.ui.button.problems_compile_button__Lfluz, .problems_content_pane__nexJa{
 .problems_custom_input_textarea__T9IDk {
     height: 70.85px;
     /* Other styles you might want to add */
-    width: auto; /* Optional: set width to 100% or any desired value */
+    width: 90%; /* Optional: set width to 100% or any desired value */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1rem;
-    resize: both; /* Allow the user to resize the textarea both horizontally and vertically */
+    resize: vertical; /* Allow the user to resize the textarea both horizontally and vertically */
 }
 
 
