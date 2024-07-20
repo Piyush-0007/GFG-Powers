@@ -1,3 +1,5 @@
+
+
 const output = document.querySelector('.problems_content__I8YGa');
 const header = document.querySelector("div.ui.green.pointing.secondary.menu");
 
@@ -14,13 +16,6 @@ const resultPanel = document.createElement("div")
 resultPanel.className = "my_problems_content_pane";
 output.appendChild(resultPanel);
 
-resultData = `
-        <div class="problems_feedback_container__5RiaB">
-            <p id="probfeedback_1" class="problems_feedback_link___wWHc">Suggest Feedback</p>
-        </div>
-        <span>Click on Compile &amp; Run button to see Result.</span>
-
-`
 let addToTestCase = true;
 
 //adding Result and primary input case.
@@ -38,6 +33,8 @@ result.addEventListener("click", (e) => {
     resultPanel.style.display = "none";
     const arena = document.querySelector(" .problems_content_pane__nexJa")
     arena.style.display = "block";
+    header.scrollLeft = 0;
+    //move to custom testcase
     if(addToTestCase){
         arena.addEventListener("click",(e)=>{
             if(e.target.classList.contains("problems_pointer__fzYYK")){
@@ -50,7 +47,6 @@ result.addEventListener("click", (e) => {
         });
         addToTestCase = false;
     }
-    clearInterval(mutation);
 
 })
 
@@ -63,7 +59,6 @@ case1.addEventListener("click", (e) => {
     saveActiveData(curActive);
     activate(case1);
     showCase(case1);
-    // resultPanel.innerHTML = defaultCase;
 })
 
 //variable to set the current active tab
@@ -108,7 +103,7 @@ function addNewCase(e){
 function saveActiveData(ele, value, nonResult = true) {
     console.log(value); 
     if ( nonResult && (curActive == result || !ele)) return;
-    const data = value??document.querySelector(".problems_custom_input_textarea__T9IDk").value;
+    const data = value??document.querySelector(".problems_custom_input_textarea__T9IDk").value??"";
     console.log("auto save");
     console.log(value);
     chrome.runtime.sendMessage({ action: "setData", key: ele.id, value: data });
@@ -118,7 +113,8 @@ function saveActiveData(ele, value, nonResult = true) {
 //changing the tab of output window
 function activate(ele) {
     // if(curActive == prevTestCase) return;
-    // prevTestCase = curActive;
+    if(curActive == ele){ return;}
+    prevTestCase = curActive;
     curActive.classList.remove("active");
     ele.classList.add("active");
     curActive = ele;
@@ -135,11 +131,10 @@ function waitForElement(selector, callback) {
         }
     }, 100); // Check every 100ms
 }
-
-const custom_input = null;
+let input_format= null;
 function customInp(custom_input) {
     custom_input.innerHTML = "";
-    const testcase = document.createElement("div");
+    testcase = document.createElement("div");
     testcase.className = "testcase";
     testcase.innerHTML = `
     <div class="testcase">
@@ -150,7 +145,6 @@ function customInp(custom_input) {
     custom_input.appendChild(testcase);
     custom_input.parentNode.classList.add("testcase");
 
-    custom_input = testcase;
 
     testcase.addEventListener("click", () => {
 
@@ -165,19 +159,58 @@ function customInp(custom_input) {
                     console.log(response);
                     showCase(curActive);
                 });
+                input_format = document.querySelector(".problems_custom_input_format__OHBL_")?.innerHTML;
             });
         } else if (curActive != result) showCase(curActive);
-        case1.click();
+
+        if(curActive != result){
+            header.scrollLeft = curActive.offsetLeft - curActive.offsetWidth / 2 + curActive.offsetWidth / 2;
+            curActive.click();
+
+        }else{
+            header.scrollLeft = prevTestCase.offsetLeft - prevTestCase.offsetWidth / 2 + prevTestCase.offsetWidth / 2;
+            prevTestCase.click();
+
+        } 
     });
 
-    //attaching event listener to 
-    document.querySelector("button.ui.button.problems_submit_button__6QoNQ").addEventListener('click',(e)=>{
+    //attaching event listener to submit button
+    const submit = document.querySelector("button.ui.button.problems_submit_button__6QoNQ");
+    submit.addEventListener('click',(e)=>{
         output.parentNode.classList.add("visible");
         console.log(e.target);
-        testcase.click();
+        if(exampleCase == null)testcase.click();
         result.click();
        
+    });
+
+    
+    function compileAndRun(){
+        if(exampleCase == null){
+            testcase.click();
+        } 
+        const id = curActive == result? prevTestCase.id : curActive.id;
+        waitForElement(`#run_${id}`,(el)=>{el.click();});
+    };
+
+    // adding shortcut for compile and run
+    document.addEventListener("keydown",(e)=>{
+        if( e.ctrlKey && e.key == ';' ){
+            testcase.click();
+        }else if( e.ctrlKey && e.key == "'"){
+            compileAndRun();
+        }else if(e.key == "Enter" && e.ctrlKey){
+            submit.click();
+        }
     })
+
+    //making custom compile and run button.
+    const run = document.createElement("button");
+    run.className = 'compile-run';
+    run.innerText = "Compile & Run";
+    run.addEventListener('click', compileAndRun);
+    custom_input.parentNode.insertBefore(run, submit);
+
 
 }
 
@@ -210,15 +243,18 @@ function showCase(cases) {
                     <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="play" class="svg-inline--fa fa-play absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"></path></svg></div><span>Run</span>
                 </button>
 
-                <span class="problems_custom_input_limit_text__tXh5w"> Char Limit: 50,000 </span>
-                <div class="problems_custom_input_format__OHBL_">
+                <div class="problems_custom_input_limit_text__tXh5w"> Char Limit: 50,000 </div>
+                ${
+                    input_format??
+                    `<div class="problems_custom_input_format__OHBL_">
                     <strong>Input Format:</strong>
                     <p>
                         <p><span style="font-size: 18px;">The first line every test case contains two space-separated integers <strong>n</strong> and <strong>k</strong>. Next line has <strong>n</strong> space-separated integers.&nbsp;</span></p>
                         <p><span style="font-size: 20px;">Example:</span></p>
                         <pre>${exampleCase}</pre>
                     </p>
-                </div>
+                    </div>`
+                }
         `;
 
 
@@ -238,7 +274,6 @@ function showCase(cases) {
 
             waitForElement(".problems_content_pane__nexJa", (el) => {
                 const textarea = el.querySelector("textarea.problems_custom_input_textarea__T9IDk");
-                // const textarea = document.querySelector('.problems_custom_input_textarea__T9IDk'); // Adjust selector if needed
 
                 if (textarea) {
                     // Update the value using React's value tracker
@@ -263,18 +298,18 @@ function showCase(cases) {
     });
 }
 
-var mutation;
-function mutationObserver() {
-    mutation = setInterval(
-        (textarea, value) => {
-            if (textarea.value != value) {
-                textarea.vale = value;
+const outputScreen = document.querySelector("div.ui.segment.ui.overlay.bottom.sidebar.problems_output_window__G_LTH.problems_normal_height__Og1iy");
+console.log(output);
 
-            }
-            console.log(textarea);
+const mutation = new MutationObserver((mutationsList) => {
+    for (let mutation of mutationsList) {
+        if (mutation.type === 'attributes' && !mutation.target.classList.contains("visible")) {
+            addToTestCase = true;
         }
-        , 100);
-}
-// Call the function to inject values
-// injectValues();
+    }
+    console.log(mutationsList)
+});
+
+mutation.observe(outputScreen, { attributes: true, attributeFilter : ["class"] });
+
 

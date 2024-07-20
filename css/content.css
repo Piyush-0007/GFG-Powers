@@ -64,7 +64,7 @@ button.ui.button.problems_compile_button__Lfluz, .problems_content_pane__nexJa{
 }
 
 
-.run_testcase {
+.run_testcase, .compile-run{
     /* margin-top:; */
     box-sizing: border-box;
     position: relative;
@@ -87,29 +87,30 @@ button.ui.button.problems_compile_button__Lfluz, .problems_content_pane__nexJa{
     color: #fff;
     border-color: #007bff;
     height: auto;
+
 }
 
-.run_testcase .svg-inline--fa {
+.run_testcase .svg-inline--fa  {
     margin-bottom: 0.25rem; /* Adjust the spacing between the icon and text */
 }
 
-.run_testcase:hover {
+.run_testcase:hover, .compile-run:hover{
     color: #fff;
     background-color: #0056b3;
     border-color: #0056b3;
 }
 
-.run_testcase:focus, .run_testcase.focus {
+.run_testcase:focus, .run_testcase.focus, .compile-run:focus, .compile-run.focus {
     color: #fff;
     background-color: #0056b3;
     border-color: #0056b3;
     box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);
 }
 
-.run_testcase:disabled, .run_testcase.disabled {
-    color: #fff;
-    background-color: #007bff;
-    border-color: #007bff;
-    opacity: 0.65;
+.compile-run{
+    border-radius: 8px;
+    font-size: 11px;
+    margin-right: 5px;
+    cursor: pointer;
 }
 
