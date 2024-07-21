@@ -20,7 +20,7 @@ let addToTestCase = true;
 
 //adding Result and primary input case.
 const result = document.createElement("a");
-result.className = "item";
+result.className = "item bgEffect";
 result.innerText = `Result`;
 header.appendChild(result);
 result.addEventListener("click", (e) => {
@@ -51,7 +51,7 @@ result.addEventListener("click", (e) => {
 })
 
 const case1 = document.createElement("a");
-case1.className = "active item";
+case1.className = "active item bgEffect";
 case1.innerText = `Case 1`;
 case1.id = 1;
 header.appendChild(case1);
@@ -72,24 +72,67 @@ ele.classList.add("item");
 ele.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor" class="h-4 w-4"><path fill-rule="evenodd" d="M13 11h7a1 1 0 110 2h-7v7a1 1 0 11-2 0v-7H4a1 1 0 110-2h7V4a1 1 0 112 0v7z" clip-rule="evenodd"></path></svg>';
 header.appendChild(ele);
 
-count = 1;
+let id = 1, index = 1;
 ele.addEventListener("click", addNewCase);
 function addNewCase(e){
     saveActiveData(curActive);
+
+    const bg = document.createElement("div");
+    bg.className = "bgTestCase bgEffect";
+    bg.dataset.index = ++index;
+
+
+    const x = document.createElement("div");
+    x.className  = "remove hide";
+    x.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="0.8rem" height="0.8rem" viewBox="0 0 384 512"><path fill="#ffffff" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>`;
+
     let inp = document.createElement("a");
-    inp.className = "item";
-    inp.innerText = `Case ${++count}`;
-    inp.id = `${count}`;
+    inp.className = "item customCase";
+    inp.innerText = "Case "+ index;
+    inp.id = `${++id}`;
+
+
+    bg.appendChild(inp);
+    bg.appendChild(x);
+    bg.addEventListener("mouseover",()=>{
+        x.classList.remove("hide");
+    });
+    bg.addEventListener("mouseout",()=>{
+        x.classList.add("hide");
+    });
+    x.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        let i = bg.nextSibling;
+        if(curActive == bg.firstElementChild){ //checking if we are removing the selected case
+            if(i == ele){  //check condition for last case 
+                bg.previousElementSibling.click();
+            }else{ // if not the last case then select the previous case
+                i.click();
+            }
+        }
+        //changing indexes for later elements
+        while(i && i != ele){
+            console.log(i);
+            let index = parseInt(i.dataset.index);
+            console.log(index);
+            i.dataset.index = index-1;
+            i.firstElementChild.innerText = "Case "+(index-1);
+            i = i.nextSibling;
+        }
+        index--;        
+        bg.remove();
+    })
+    
     
     saveActiveData(inp, e.input??exampleCase, false)
     if(curActive == result){
         showCase(inp);
     }
     activate(inp);
-    header.insertBefore(inp, ele);
+    header.insertBefore(bg, ele);
     header.scrollLeft = header.scrollWidth;
 
-    inp.addEventListener("click", (e) => {
+    bg.addEventListener("click", (e) => {
         saveActiveData(curActive);
         activate(inp);
         showCase(inp);
@@ -101,11 +144,8 @@ function addNewCase(e){
 }
 
 function saveActiveData(ele, value, nonResult = true) {
-    console.log(value); 
     if ( nonResult && (curActive == result || !ele)) return;
     const data = value??document.querySelector(".problems_custom_input_textarea__T9IDk").value??"";
-    console.log("auto save");
-    console.log(value);
     chrome.runtime.sendMessage({ action: "setData", key: ele.id, value: data });
 }
 
@@ -156,7 +196,6 @@ function customInp(custom_input) {
                 exampleCase = runnable.value;
                 const payload = { action: "setData", key: curActive.id, value: exampleCase };
                 chrome.runtime.sendMessage(payload, (response) => {
-                    console.log(response);
                     showCase(curActive);
                 });
                 input_format = document.querySelector(".problems_custom_input_format__OHBL_")?.innerHTML;
@@ -178,7 +217,6 @@ function customInp(custom_input) {
     const submit = document.querySelector("button.ui.button.problems_submit_button__6QoNQ");
     submit.addEventListener('click',(e)=>{
         output.parentNode.classList.add("visible");
-        console.log(e.target);
         if(exampleCase == null)testcase.click();
         result.click();
        
@@ -228,12 +266,10 @@ function showCase(cases) {
     }catch(e){console.log(e);}
     
     // Retrieve the values from chrome.storage.session
-    console.log("into the showcase")
     const payload = { action: "getData", key: cases.id };
     chrome.runtime.sendMessage(payload, function (resultData) {
         // Extract the values from the result object
         let data = resultData.data || exampleCase;
-        console.log(result)
         // Create the HTML structure
         const htmlContent = `
                 <span class="problems_testcase_example" >use example testcase</span>
@@ -242,7 +278,7 @@ function showCase(cases) {
                 <button class="run_testcase " id="run_${cases.id}">
                     <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="play" class="svg-inline--fa fa-play absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"></path></svg></div><span>Run</span>
                 </button>
-
+                
                 <div class="problems_custom_input_limit_text__tXh5w"> Char Limit: 50,000 </div>
                 ${
                     input_format??
@@ -299,7 +335,6 @@ function showCase(cases) {
 }
 
 const outputScreen = document.querySelector("div.ui.segment.ui.overlay.bottom.sidebar.problems_output_window__G_LTH.problems_normal_height__Og1iy");
-console.log(output);
 
 const mutation = new MutationObserver((mutationsList) => {
     for (let mutation of mutationsList) {
@@ -307,7 +342,6 @@ const mutation = new MutationObserver((mutationsList) => {
             addToTestCase = true;
         }
     }
-    console.log(mutationsList)
 });
 
 mutation.observe(outputScreen, { attributes: true, attributeFilter : ["class"] });
