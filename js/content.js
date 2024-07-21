@@ -112,16 +112,14 @@ function addNewCase(e){
         }
         //changing indexes for later elements
         while(i && i != ele){
-            console.log(i);
             let index = parseInt(i.dataset.index);
-            console.log(index);
             i.dataset.index = index-1;
             i.firstElementChild.innerText = "Case "+(index-1);
             i = i.nextSibling;
         }
         index--;        
         bg.remove();
-    })
+    });
     
     
     saveActiveData(inp, e.input??exampleCase, false)
@@ -235,10 +233,18 @@ function customInp(custom_input) {
     document.addEventListener("keydown",(e)=>{
         if( e.ctrlKey && e.key == ';' ){
             testcase.click();
-        }else if( e.ctrlKey && e.key == "'"){
+        }else if( e.ctrlKey && e.key === "'"){
             compileAndRun();
-        }else if(e.key == "Enter" && e.ctrlKey){
+        }else if(e.ctrlKey && e.key === "Enter"  ){
             submit.click();
+        }else if(e.ctrlKey && e.key === "."){
+            ele.click();
+        }else if(e.ctrlKey && e.key === ","){
+            const element = curActive.nextElementSibling;
+            if(element && element != ele){
+                element.click();
+            }
+
         }
     })
 
