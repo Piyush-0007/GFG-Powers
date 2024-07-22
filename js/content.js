@@ -37,7 +37,8 @@ result.addEventListener("click", (e) => {
     //move to custom testcase
     if(addToTestCase){
         arena.addEventListener("click",(e)=>{
-            if(e.target.classList.contains("problems_pointer__fzYYK")){
+            const cls = e.target.classList;
+            if(cls.contains("problems_pointer__fzYYK") && cls.contains("branch")){
                 e.stopPropagation();
                 const value = e?.target?.parentNode?.parentNode?.nextSibling?.innerText;
                 const testcase = addNewCase({input : value});
@@ -227,7 +228,7 @@ function customInp(custom_input) {
         if(exampleCase == null){
             testcase.click();
         } 
-        const id = curActive == result? prevTestCase.id : curActive.id;
+        const id = (curActive == result)? prevTestCase.id : curActive.id;
         waitForElement(`#run_${id}`,(el)=>{ el.click(); });
     };
 
@@ -241,7 +242,7 @@ function customInp(custom_input) {
             submit.click();
         }else if(e.ctrlKey && e.altKey && e.key === "."){ //add to test case
             if(curActive == result){
-                const copyTestCase = document.querySelector('.problems_pointer__fzYYK');
+                const copyTestCase = document.querySelector('.branch.problems_pointer__fzYYK');
                 console.log(copyTestCase);
                 if(copyTestCase){
                     copyTestCase.click();
@@ -322,7 +323,6 @@ function showCase(cases) {
         document.querySelector(`#run_${cases.id}`).addEventListener("click", (e) => {
             const data = document.querySelector(".problems_custom_input_textarea__T9IDk").value;
             chrome.runtime.sendMessage({ action: "setData", key: curActive.id, value: data });
-            console.log(data)
             child[1].click();
 
             waitForElement(".problems_content_pane__nexJa", (el) => {
