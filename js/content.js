@@ -236,6 +236,7 @@ function customInp(custom_input) {
         if( e.ctrlKey && e.key === ";" ){;
             testcase.click();
         }else if( e.ctrlKey && e.key === "'"){
+        }else if( e.ctrlKey && e.key === "'"){
             compileAndRun();
         }else if(e.ctrlKey && e.key === "Enter"){
             submit.click();
