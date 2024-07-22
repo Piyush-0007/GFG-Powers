@@ -40,7 +40,6 @@ result.addEventListener("click", (e) => {
             if(e.target.classList.contains("problems_pointer__fzYYK")){
                 e.stopPropagation();
                 const value = e?.target?.parentNode?.parentNode?.nextSibling?.innerText;
-                console.log(value);
                 const testcase = addNewCase({input : value});
                 showCase(testcase);
             }
@@ -119,8 +118,8 @@ function addNewCase(e){
         }
         index--;        
         bg.remove();
-        chrome.runtime.sendMessage({ action: "removeData", key: inp.id},(data)=>{
-            console.log(data);
+        chrome.runtime.sendMessage({ action: "removeData", key: inp.id},({error})=>{
+            if(error)console.log(error);
         });
     });
     
@@ -229,27 +228,34 @@ function customInp(custom_input) {
             testcase.click();
         } 
         const id = curActive == result? prevTestCase.id : curActive.id;
-        waitForElement(`#run_${id}`,(el)=>{el.click();});
+        waitForElement(`#run_${id}`,(el)=>{ el.click(); });
     };
 
     // adding shortcut for compile and run
     document.addEventListener("keydown",(e)=>{
-        console.log(`Key pressed: ${e.key}, Ctrl: ${e.ctrlKey}`);
         if( e.ctrlKey && e.key === ";" ){;
             testcase.click();
         }else if( e.ctrlKey && e.key === "'"){
             compileAndRun();
         }else if(e.ctrlKey && e.key === "Enter"){
             submit.click();
-        }else if(e.ctrlKey && e.key === "."){
-            ele.click();
-        }else if(e.ctrlKey && e.key === ","){
+        }else if(e.ctrlKey && e.altKey && e.key === "."){ //add to test case
+            if(curActive == result){
+                const copyTestCase = document.querySelector('.problems_pointer__fzYYK');
+                console.log(copyTestCase);
+                if(copyTestCase){
+                    copyTestCase.click();
+                    return;
+                }
+            }else{
+                ele.click();
+            }
+        }else if(e.ctrlKey && e.altKey && e.key === ","){ //remove test case
             e.preventDefault();
             const element = curActive.nextElementSibling;
             if(element && element != ele){
                 element.click();
             }
-
         }
     })
 
