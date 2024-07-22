@@ -16,6 +16,14 @@ chrome.runtime.onMessage.addListener((payload, sender, sendResponse) => {
                     sendResponse({ success: true, data: data[payload.key] });
                 }
             });
+        } else if(payload.action == "removeData"){
+            chrome.storage.session.remove([payload.key], function() {
+                if (chrome.runtime.lastError) {
+                    sendResponse({ success: false, error: chrome.runtime.lastError.message });
+                } else {
+                    sendResponse({ success: true });
+                }
+            });
         }
     } catch (err) {
         sendResponse({ success: false, error: err.message });

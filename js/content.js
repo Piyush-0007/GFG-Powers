@@ -119,6 +119,9 @@ function addNewCase(e){
         }
         index--;        
         bg.remove();
+        chrome.runtime.sendMessage({ action: "removeData", key: inp.id},(data)=>{
+            console.log(data);
+        });
     });
     
     
@@ -232,11 +235,11 @@ function customInp(custom_input) {
     // adding shortcut for compile and run
     document.addEventListener("keydown",(e)=>{
         console.log(`Key pressed: ${e.key}, Ctrl: ${e.ctrlKey}`);
-        if( e.ctrlKey && e.key == ';' ){
+        if( e.ctrlKey && e.key === ";" ){;
             testcase.click();
         }else if( e.ctrlKey && e.key === "'"){
             compileAndRun();
-        }else if(e.ctrlKey && e.key === "Enter"  ){
+        }else if(e.ctrlKey && e.key === "Enter"){
             submit.click();
         }else if(e.ctrlKey && e.key === "."){
             ele.click();
