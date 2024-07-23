@@ -2,6 +2,7 @@
 
 const output = document.querySelector('.problems_content__I8YGa');
 const header = document.querySelector("div.ui.green.pointing.secondary.menu");
+header.scrollTop = header.scrollHeight;
 
 const child = header.childNodes;
 //remove the existing values
@@ -33,7 +34,8 @@ result.addEventListener("click", (e) => {
     resultPanel.style.display = "none";
     const arena = document.querySelector(" .problems_content_pane__nexJa")
     arena.style.display = "block";
-    header.scrollLeft = 0;
+    header.scrollLeft = 0;  
+    header.scrollTop = header.scrollHeight;
     //move to custom testcase
     if(addToTestCase){
         arena.addEventListener("click",(e)=>{
@@ -56,6 +58,7 @@ case1.innerText = `Case 1`;
 case1.id = 1;
 header.appendChild(case1);
 case1.addEventListener("click", (e) => {
+    header.scrollTop = header.scrollHeight;
     saveActiveData(curActive);
     activate(case1);
     showCase(case1);
@@ -225,11 +228,14 @@ function customInp(custom_input) {
 
     
     function compileAndRun(){
+        const id = (curActive == result)? prevTestCase : curActive;
         if(exampleCase == null){
             testcase.click();
-        } 
-        const id = (curActive == result)? prevTestCase.id : curActive.id;
-        waitForElement(`#run_${id}`,(el)=>{ el.click(); });
+        }else{
+            if(curActive != result)id.click();
+        }
+
+        waitForElement(`#run_${id.id}`,(el)=>{ el.click(); });
     };
 
     // adding shortcut for compile and run
@@ -237,11 +243,10 @@ function customInp(custom_input) {
         if( e.ctrlKey && e.key === ";" ){;
             testcase.click();
         }else if( e.ctrlKey && e.key === "'"){
-        }else if( e.ctrlKey && e.key === "'"){
             compileAndRun();
         }else if(e.ctrlKey && e.key === "Enter"){
             submit.click();
-        }else if(e.ctrlKey && e.altKey && e.key === "."){ //add to test case
+        }else if(e.ctrlKey && (e.altKey?e.altKey:true) && e.key === "."){ //add to test case
             if(curActive == result){
                 const copyTestCase = document.querySelector('.branch.problems_pointer__fzYYK');
                 console.log(copyTestCase);
@@ -252,7 +257,7 @@ function customInp(custom_input) {
             }else{
                 ele.click();
             }
-        }else if(e.ctrlKey && e.altKey && e.key === ","){ //remove test case
+        }else if(e.ctrlKey && (e.altKey?e.altKey:true) && e.key === ","){ //remove test case
             e.preventDefault();
             const element = curActive.nextElementSibling;
             if(element && element != ele){
@@ -292,7 +297,7 @@ function showCase(cases) {
         // Create the HTML structure
         const htmlContent = `
                 <span class="problems_testcase_example" >use example testcase</span>
-                <textarea maxlength="50000" class="problems_custom_input_textarea__T9IDk" height="3rem" rows="3">${data}</textarea>
+                <textarea class="problems_custom_input_textarea__T9IDk" height="3rem" rows="3">${data}</textarea>
 
                 <button class="run_testcase " id="run_${cases.id}">
                     <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="play" class="svg-inline--fa fa-play absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"></path></svg></div><span>Run</span>
