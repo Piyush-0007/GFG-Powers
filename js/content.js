@@ -151,8 +151,8 @@ function addNewCase(e){
 
 function saveActiveData(ele, value, nonResult = true) {
     if ( nonResult && (curActive == result || !ele)) return;
-    const data = value??document.querySelector(".problems_custom_input_textarea__T9IDk").value??"";
-    chrome.runtime.sendMessage({ action: "setData", key: ele.id, value: data });
+    const data = value??document.querySelector(".problems_custom_input_textarea__T9IDk")?.value;
+    if(data) chrome.runtime.sendMessage({ action: "setData", key: ele.id, value: data });
 }
 
 
@@ -198,7 +198,7 @@ function customInp(custom_input) {
 
         if (exampleCase == null) {
             waitForElement(".problems_content_pane__nexJa", (defCase) => {
-                runnable = document.querySelector(".problems_custom_input_textarea__T9IDk")
+                runnable = defCase.querySelector(".problems_custom_input_textarea__T9IDk")
                 exampleCase = runnable.value;
                 const payload = { action: "setData", key: curActive.id, value: exampleCase };
                 chrome.runtime.sendMessage(payload, (response) => {

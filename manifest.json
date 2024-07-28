@@ -4,6 +4,7 @@
   "description" : "Provide power for the GeeksForGeeks problem solving website of ability to save multiple input and with handy shortcuts.",
   "version" : "1.0.0",
   "action" : {
+    "default_popup": "popup.html",
     "default_icon"  : "images/icon.png"
   },
   "icons": {
