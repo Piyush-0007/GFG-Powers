@@ -1,33 +1,33 @@
 {
-  "manifest_version" : 3,
-  "name" : "GeeksForGeeks - Unlocking Super Powers",
-  "description" : "Provide power for the GeeksForGeeks problem solving website of ability to save multiple input and with handy shortcuts.",
-  "version" : "1.0.0",
-  "action" : {
+  "manifest_version": 3,
+  "name": "GeeksForGeeks - Unlocking Powers",
+  "description": "Provide power for the GeeksForGeeks problem solving website of ability to save multiple input and with handy shortcuts.",
+  "version": "1.2.0",
+  "action": {
     "default_popup": "popup.html",
-    "default_icon"  : "images/icon.png"
+    "default_icon": "images/icon.png"
   },
   "icons": {
-    "16" : "images/icon.png",
-    "48" : "images/icon.png",
-    "128" : "images/icon.png"
+    "16": "images/icon.png",
+    "48": "images/icon.png",
+    "128": "images/icon.png"
   },
-  "content_scripts":[
+  "content_scripts": [
     {
-      "matches":["https://www.geeksforgeeks.org/problems*"],
-      "js" : ["js/content.js"],
-      "css" : ["css/content.css"],
+      "matches": ["https://www.geeksforgeeks.org/problems*"],
+      "js": ["js/content.js"],
+      "css": ["css/content.css"],
       "run_at": "document_idle"
     }
   ],
-  "permissions" : [
-    "storage",
-    "activeTab",
-    "scripting",
-    "declarativeContent"
-  ],
-  "background"  : {
-    "service_worker" : "js/background.js" 
-  }
-
+  "permissions": ["storage", "activeTab", "scripting", "declarativeContent"],
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "matches": ["<all_urls>"],
+      "resources": ["js/cppParser.js", "js/formatScript.js", "js/javaParser.js"]
+    }
+  ]
 }
